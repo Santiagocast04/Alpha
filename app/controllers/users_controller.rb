@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update]
+  before_action :require_user, only: [:edit, :update]
+  before_action :same_user, only: [:edit, :update]
 
   def show
     @articles = @user.articles.paginate(page: params[:page], per_page: 4)
@@ -44,6 +46,13 @@ class UsersController < ApplicationController
 
   def set_user
     @user = User.find(params[:id])
+  end
+
+  def same_user
+    if current_user !=@user
+      flash[:alert] = "this action is only valid with the same user"
+      redirect_to user_path
+    end
   end
 
 end
